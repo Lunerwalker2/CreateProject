@@ -37,6 +37,7 @@ def checkForKeyExit(keylist):
     if keylist[K_ESCAPE]:
         sys.exit()
 
+
 # If the user left clicks, send robot to the mouse
 def checkForFollow():
     pressed = mouse.get_pressed()
@@ -47,8 +48,6 @@ def checkForFollow():
         robotObject.odo_a = 0
         robotObject.odo_x = 0
         robotObject.odo_y = 0
-
-
 
 
 while 1:
@@ -69,8 +68,7 @@ while 1:
     mouseRel = mouse.get_pos()
 
     # Print the mouse position (DEBUG)
-    print(str(mouseRel) + str((robotObject.x, robotObject.y)))
-
+    print(str(mouseRel) + str((robotObject.x, robotObject.y)) + "Paths length: "+str(len(robotObject.paths)))
 
     if loopNums % 1 == 0:
         robotObject.path()
@@ -86,7 +84,6 @@ while 1:
 
     # Update what the user sees
     pg.display.flip()
-
 
     clock.tick(60)
     loopNums += 1

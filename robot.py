@@ -67,6 +67,10 @@ class Robot:
         self.vel_y *= Constants.DAMPENING
         self.vel_a *= Constants.DAMPENING_A
 
+        # Start trimming the path list if it gets too big
+        if len(self.paths) >= 1000:
+            del self.paths[0]
+
     def path(self):
         old = (self.odo_x, self.odo_y, self.odo_a)
 
@@ -156,7 +160,9 @@ class Robot:
 
         new = (self.odo_x, self.odo_y, self.odo_a)
 
-        self.paths.append([old, new])
+        # To avoid using up unnecessary operations, don't update the path if the robot isn't moving
+        if not (abs(self.vel_x) <= 0.01 and abs(self.vel_y) <= 0.01):
+            self.paths.append([old, new])
 
         self.enc_c = 0
         self.enc_l = 0

@@ -14,7 +14,7 @@ HEADING_COLOR = [255, 40, 40]
 PIX_PER_INCH = SCREENSIZE // INCHES
 
 
-backgroundFileName = "Images/stars.jpg"
+backgroundFileName = "Images/field-skystone-dark-fix.jpg"
 iconFileName = "Images/icon.jpg"
 
 backgroundFileOriginal = pg.image.load(backgroundFileName)
