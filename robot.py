@@ -6,6 +6,15 @@ import random
 import Constants
 
 
+def normalize_angle(angle):
+    while -math.pi > angle > math.pi:
+        if angle < -math.pi:
+            angle += 2*math.pi
+        if angle > math.pi:
+            angle -= 2*math.pi
+    return angle
+
+
 class Robot:
     def __init__(self):
         self.width = 18
@@ -14,6 +23,8 @@ class Robot:
         self.x = 0
         self.y = 0
         self.a = 0
+
+        self.line_buffer = 1000
 
         self.vel_x = 0
         self.vel_y = 0
@@ -49,6 +60,11 @@ class Robot:
         if keys[K_RIGHT]:
             self.vel_a += 0.05 / 2
 
+        if keys[K_PAGEUP]:
+            self.line_buffer = 1000
+        elif keys[K_PAGEDOWN]:
+            self.line_buffer = 700
+
         self.vel_a += (random.randint(-100, 100) / 1000000 * math.sqrt(self.vel_x ** 2 + self.vel_y ** 2))
         self.a += self.vel_a / 2
 
@@ -68,7 +84,7 @@ class Robot:
         self.vel_a *= Constants.DAMPENING_A
 
         # Start trimming the path list if it gets too big
-        if len(self.paths) >= 1000:
+        if len(self.paths) >= self.line_buffer:
             del self.paths[0]
 
     def path(self):
@@ -169,13 +185,14 @@ class Robot:
         self.enc_r = 0
 
     def draw(self, surf):
-        positionOnBoard = (int(self.x * Constants.PIX_PER_INCH), int(self.y * Constants.PIX_PER_INCH))
+        position_on_board = (int(self.x * Constants.PIX_PER_INCH), int(self.y * Constants.PIX_PER_INCH))
 
-        pg.draw.circle(surf, Constants.ROBOT_COLOR, positionOnBoard, int(self.width / 2 * Constants.PIX_PER_INCH), 2)
+        pg.draw.circle(surf, Constants.ROBOT_COLOR, position_on_board, int(self.width / 2 * Constants.PIX_PER_INCH), 2)
 
-        pg.draw.line(surf, Constants.HEADING_COLOR, positionOnBoard, (
-        int((self.x + (math.cos(self.a) * 14)) * Constants.PIX_PER_INCH), int((self.y + (math.sin(self.a) * 14)) * Constants.PIX_PER_INCH)),
-                     2)
+        pg.draw.line(surf, Constants.HEADING_COLOR, position_on_board, (
+        int((self.x + (math.cos(self.a) * 14)) * Constants.PIX_PER_INCH), int((self.y + (math.sin(self.a) * 14)) *
+                                                                              Constants.PIX_PER_INCH)), 2)
         for path in self.paths:
-            pg.draw.line(surf, Constants.LINE_COLOR, (int(path[0][0] * Constants.PIX_PER_INCH), int(path[0][1] * Constants.PIX_PER_INCH)),
+            pg.draw.line(surf, Constants.LINE_COLOR, (int(path[0][0] * Constants.PIX_PER_INCH),
+                                                      int(path[0][1] * Constants.PIX_PER_INCH)),
                          (int(path[1][0] * Constants.PIX_PER_INCH), int(path[1][1] * Constants.PIX_PER_INCH)), 2)

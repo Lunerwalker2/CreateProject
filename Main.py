@@ -4,12 +4,20 @@ import sys
 import pygame.mouse as mouse
 import Constants
 import robot
-
+import pygame.font as font
 
 # Set up the screen
 screen = pg.display.set_mode((720, 720), HWACCEL | HWSURFACE | DOUBLEBUF)
 pg.display.set_caption("Odometry Simulator v1.2")
 pg.display.set_icon(Constants.iconImage)
+font.init()
+
+our_font = font.SysFont("Arial", 13, True)
+
+starting_text_pos = (540, 15)
+text_pose = list(starting_text_pos)
+
+text_surface = pg.Surface((720, 720))
 
 mouse.set_pos(Constants.center)
 
@@ -24,25 +32,27 @@ clock = pg.time.Clock()
 
 loopNums = 0
 
+runtime = 0
+
 
 # Check to see if the window has been "x-ed" out
-def checkForWindowExit(eventList):
-    for event in eventList:
+def check_for_window_exit(event_list):
+    for event in event_list:
         if event.type == QUIT:
             sys.exit()
 
 
 # Check to see if the escape key has been pressed
-def checkForKeyExit(keylist):
-    if keylist[K_ESCAPE]:
+def check_for_key_exit(key_list):
+    if key_list[K_ESCAPE]:
         sys.exit()
 
 
-# If the user left clicks, send robot to the mouse
-def checkForFollow():
+# If the user left clicks, send robot to the starting position
+def check_for_follow():
     pressed = mouse.get_pressed()
-    if pressed[0]:
-        robotObject.x = 0
+    if pressed[0]:  # Check for left click
+        robotObject.x = 0  # Set the robot to the starting position
         robotObject.y = 0
         robotObject.a = 0
         robotObject.odo_a = 0
@@ -50,25 +60,49 @@ def checkForFollow():
         robotObject.odo_y = 0
 
 
-while 1:
+# Add the given text to the screen
+def add_text(text):
+    text = our_font.render(text, False, (20, 255, 20))
+    screen.blit(text, text_pose)
+    text_pose[1] += (13 + 2)
+
+
+def round_position(pos):
+    new_pos = list(pos)
+    new_pos[0] = round(new_pos[0], 2)
+    new_pos[1] = round(new_pos[1], 2)
+    return new_pos
+
+
+def str_list(num_list):
+    new_str = ""
+    for num in num_list:
+        new_str += str(num)
+        if not num_list.index(num) == num_list[len(num_list) - 1]:
+            new_str += ", "
+    return new_str
+
+
+# Run for 30 minutes
+while 1 and not (runtime / 1000) >= 1800:
+    # Update the runtime
+    runtime = pg.time.get_ticks()
+
     # Update events and keyboard events
     events = pg.event.get()
     keys = pg.key.get_pressed()
 
     # Check if we need to exit
-    checkForWindowExit(events)
-    checkForKeyExit(keys)
+    check_for_window_exit(events)
+    check_for_key_exit(keys)
 
-    checkForFollow()
+    check_for_follow()
 
     # Inform the robot of the keys
     robotObject.update(keys)
 
     # Find the mouse position
     mouseRel = mouse.get_pos()
-
-    # Print the mouse position (DEBUG)
-    print(str(mouseRel) + str((robotObject.x, robotObject.y)) + "Paths length: "+str(len(robotObject.paths)))
 
     if loopNums % 1 == 0:
         robotObject.path()
@@ -79,11 +113,36 @@ while 1:
     # Fill the screen with the image
     screen.blit(Constants.backgroundImage, (0, 0))
 
+    add_text("Paths Length: "+str(len(robotObject.paths)))
+    add_text("Robot Position: "+str_list(round_position((robotObject.x, robotObject.y))))
+    add_text("Odometry Position: "+str_list(round_position((robotObject.odo_x, robotObject.odo_y))))
+    add_text("Robot Heading: "+str(round(robot.normalize_angle(robotObject.a), 2)))
+    add_text("Odometry Heading: "+str(round(robot.normalize_angle(robotObject.odo_a), 2)))
+    add_text("Runtime (sec): "+str(runtime / 1000))
+    add_text("FPS (target = 60): "+str(round(clock.get_fps(), 2)))
     # Tell the robot object to draw itself
     robotObject.draw(screen)
 
     # Update what the user sees
     pg.display.flip()
 
+    text_pose = list(starting_text_pos)
     clock.tick(60)
     loopNums += 1
+
+screen.fill(black)
+text_pose[0] = 100
+text_pose[1] = 360
+our_font = pg.font.SysFont("Arial", 20, True)
+add_text("FOR THE LOVE OF GOD DO SOMETHING ELSE IN YOUR LIFE!")
+pg.display.flip()
+
+while 1:
+
+    # Update events and keyboard events
+    events = pg.event.get()
+    keys = pg.key.get_pressed()
+
+    # Check if we need to exit
+    check_for_window_exit(events)
+    check_for_key_exit(keys)

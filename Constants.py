@@ -14,6 +14,9 @@ HEADING_COLOR = [255, 40, 40]
 PIX_PER_INCH = SCREENSIZE // INCHES
 
 
+FIELD = 0
+STARS = 1
+
 backgroundFileName = "Images/field-skystone-dark-fix.jpg"
 iconFileName = "Images/icon.jpg"
 
@@ -23,3 +26,9 @@ iconFileOriginal = pg.image.load(iconFileName)
 backgroundImage = pg.transform.scale(backgroundFileOriginal, (720, 720))
 iconImage = pg.transform.scale(iconFileOriginal, (32, 32))
 
+
+def get_background(index):
+    if index == FIELD:
+        return FIELD
+    elif index == STARS:
+        return STARS
