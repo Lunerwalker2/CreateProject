@@ -12,7 +12,9 @@ pg.display.set_caption("Odometry Simulator v1.2")
 pg.display.set_icon(Constants.iconImage)
 font.init()
 
-our_font = font.SysFont("Arial", 13, True)
+burbankFileName = "Images/BurbankBigCondensed-Bold.otf"
+our_font = pg.font.SysFont("Arial", 13)
+
 
 starting_text_pos = (540, 15)
 text_pose = list(starting_text_pos)

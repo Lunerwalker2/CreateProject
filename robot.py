@@ -7,11 +7,10 @@ import Constants
 
 
 def normalize_angle(angle):
-    while -math.pi > angle > math.pi:
-        if angle < -math.pi:
-            angle += 2*math.pi
-        if angle > math.pi:
-            angle -= 2*math.pi
+    while angle >= math.pi:
+        angle -= math.pi * 2
+    while angle < -math.pi:
+        angle += math.pi * 2
     return angle
 
 
@@ -185,14 +184,14 @@ class Robot:
         self.enc_r = 0
 
     def draw(self, surf):
-        position_on_board = (int(self.x * Constants.PIX_PER_INCH), int(self.y * Constants.PIX_PER_INCH))
+        position_on_board = (int(self.x * Constants.PIX_PER_INCH) + 360, int(self.y * Constants.PIX_PER_INCH) + 360)
 
         pg.draw.circle(surf, Constants.ROBOT_COLOR, position_on_board, int(self.width / 2 * Constants.PIX_PER_INCH), 2)
 
         pg.draw.line(surf, Constants.HEADING_COLOR, position_on_board, (
-        int((self.x + (math.cos(self.a) * 14)) * Constants.PIX_PER_INCH), int((self.y + (math.sin(self.a) * 14)) *
-                                                                              Constants.PIX_PER_INCH)), 2)
+        int((self.x + (math.cos(self.a) * 14)) * Constants.PIX_PER_INCH) + 360, int((self.y + (math.sin(self.a) * 14)) *
+                                                                              Constants.PIX_PER_INCH) + 360), 2)
         for path in self.paths:
-            pg.draw.line(surf, Constants.LINE_COLOR, (int(path[0][0] * Constants.PIX_PER_INCH),
-                                                      int(path[0][1] * Constants.PIX_PER_INCH)),
-                         (int(path[1][0] * Constants.PIX_PER_INCH), int(path[1][1] * Constants.PIX_PER_INCH)), 2)
+            pg.draw.line(surf, Constants.LINE_COLOR, (int(path[0][0] * Constants.PIX_PER_INCH) + 360,
+                                                      int(path[0][1] * Constants.PIX_PER_INCH) + 360),
+                         (int(path[1][0] * Constants.PIX_PER_INCH) + 360, int(path[1][1] * Constants.PIX_PER_INCH) + 360), 2)
