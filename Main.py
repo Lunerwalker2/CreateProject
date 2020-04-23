@@ -63,7 +63,7 @@ def check_for_follow():
 
 
 # Add the given text to the screen
-def add_text(text):
+def add_text(text: str):
     text = our_font.render(text, False, (20, 255, 20))
     screen.blit(text, text_pose)
     text_pose[1] += (13 + 2)

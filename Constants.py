@@ -28,7 +28,6 @@ iconImage = pg.transform.scale(iconFileOriginal, (32, 32))
 
 
 
-
 def get_background(index):
     if index == FIELD:
         return FIELD
